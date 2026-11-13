@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10233f">
+  <title>Reto IV | Verdadero o falso</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #10233f;
+      --muted: #64748b;
+      --paper: #f7f3ff;
+      --teal: #087f8c;
+      --purple: #7654c8;
+      --lilac: #a78bfa;
+      --coral: #ef6c59;
+      --green: #138a68;
+      --border: #e4eaf2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 28px 18px;
+      color: var(--navy);
+      background:
+        radial-gradient(ellipse at 12% 8%, #e8ddff 0, transparent 26rem),
+        radial-gradient(ellipse at 95% 82%, #dff5f1 0, transparent 28rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button { font: inherit; }
+
+    .app {
+      width: min(100%, 900px);
+      margin: 0 auto;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: .92rem;
+      font-weight: 850;
+      letter-spacing: .04em;
+    }
+
+    .brand-icon {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 14px;
+      color: #fff;
+      background: linear-gradient(140deg, var(--purple), #b18af6);
+      box-shadow: 0 8px 18px #7654c830;
+    }
+
+    .brand-icon svg { width: 24px; }
+
+    .level {
+      padding: 8px 13px;
+      border: 1px solid #e6dcff;
+      border-radius: 999px;
+      color: #6747b6;
+      background: #f3eeff;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .music-toggle {
+      padding: 8px 12px;
+      border: 1px solid #e6dcff;
+      border-radius: 999px;
+      color: #6747b6;
+      background: #fff;
+      cursor: pointer;
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    .music-toggle[aria-pressed="true"] {
+      color: #fff;
+      background: #7654c8;
+    }
+
+    .level-select { text-align: center; }
+    .level-select h2 { margin: 0 0 8px; font-size: 1.65rem; }
+    .level-select > p { margin: 0 auto 19px; color: var(--muted); line-height: 1.5; }
+
+    .level-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .level-option {
+      min-height: 142px;
+      padding: 17px 12px;
+      border: 2px solid #e8defc;
+      border-radius: 17px;
+      color: var(--navy);
+      background: linear-gradient(150deg, #fff, #f4efff);
+      cursor: pointer;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+
+    .level-option:hover {
+      transform: translateY(-3px);
+      border-color: #b69cf1;
+      box-shadow: 0 9px 20px #7654c824;
+    }
+
+    .level-option:focus-visible {
+      outline: 3px solid #f3b443;
+      outline-offset: 3px;
+    }
+
+    .level-option .level-icon { display: block; margin-bottom: 8px; font-size: 1.8rem; }
+    .level-option strong { display: block; color: #6747b6; font-size: 1rem; }
+    .level-option small { display: block; margin-top: 5px; color: var(--muted); line-height: 1.35; }
+
+    .result-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .restart.secondary {
+      color: #6747b6;
+      border: 1px solid #e6dcff;
+      background: #f3eeff;
+      box-shadow: none;
+    }
+
+    .nurse-warning {
+      position: fixed;
+      z-index: 20;
+      top: 50%;
+      left: 50%;
+      display: grid;
+      grid-template-columns: 102px 1fr;
+      align-items: center;
+      gap: 10px;
+      width: min(340px, calc(100vw - 32px));
+      padding: 13px 17px 13px 8px;
+      border: 2px solid #d8c8ff;
+      border-radius: 22px;
+      color: #39245f;
+      background: #fff;
+      box-shadow: 0 18px 50px #25134645;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+    }
+
+    .nurse-warning[hidden] { display: none; }
+    .nurse-warning.show { animation: nurse-enter .42s ease-out both; }
+    .nurse-warning svg { width: 100px; height: 118px; }
+    .nurse-message { font-size: 1.08rem; font-weight: 850; line-height: 1.35; }
+    .nurse-message small { display: block; margin-top: 6px; color: #735e9e; font-size: .82rem; font-weight: 650; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 190px;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 19px;
+      padding: 27px 30px;
+      overflow: hidden;
+      border-radius: 25px;
+      color: #fff;
+      background: linear-gradient(120deg, #35255f, #6747a9 67%, #8b65d8);
+      box-shadow: 0 18px 38px #12355220;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: #e0d1ff;
+      font-size: .75rem;
+      font-weight: 850;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 580px;
+      margin: 0;
+      font-size: clamp(1.85rem, 5vw, 2.8rem);
+      line-height: 1.08;
+      letter-spacing: -.04em;
+    }
+
+    .hero p:last-child {
+      max-width: 510px;
+      margin: 11px 0 0;
+      color: #d3e6ee;
+      font-size: .95rem;
+      line-height: 1.55;
+    }
+
+    .hero-art {
+      width: 100%;
+      max-width: 170px;
+      justify-self: center;
+      filter: drop-shadow(0 10px 12px #071a2d50);
+    }
+
+    .card {
+      padding: 25px;
+      border: 1px solid #ffffffc9;
+      border-radius: 23px;
+      background: #ffffffed;
+      box-shadow: 0 16px 42px #1c385414;
+      backdrop-filter: blur(8px);
+    }
+
+    .stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 11px;
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 750;
+    }
+
+    .score-pill {
+      padding: 7px 11px;
+      border-radius: 999px;
+      color: #6747b6;
+      background: #f0eaff;
+    }
+
+    .track {
+      height: 9px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e9eef4;
+    }
+
+    .progress {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #9270e6, #c09cff);
+      transition: width .35s ease;
+    }
+
+    .question-layout {
+      display: grid;
+      grid-template-columns: 1fr 150px;
+      align-items: center;
+      gap: 20px;
+      min-height: 175px;
+    }
+
+    .question-index {
+      margin: 0 0 9px;
+      color: var(--purple);
+      font-size: .76rem;
+      font-weight: 850;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .question-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .question-controls .question-index { margin: 0; }
+
+    .repeat-question {
+      padding: 6px 10px;
+      border: 1px solid #e6dcff;
+      border-radius: 999px;
+      color: #6747b6;
+      background: #f5f0ff;
+      cursor: pointer;
+      font-size: .78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .repeat-question:focus-visible {
+      outline: 3px solid #f3b443;
+      outline-offset: 3px;
+    }
+
+    .question {
+      margin: 0;
+      font-size: clamp(1.25rem, 3.2vw, 1.72rem);
+      line-height: 1.4;
+      letter-spacing: -.02em;
+    }
+
+    .art-frame {
+      display: grid;
+      min-height: 142px;
+      place-items: center;
+      border-radius: 21px;
+      background: linear-gradient(145deg, #e7dcff, #f8efff 58%, #e1f7f3);
+    }
+
+    .art-frame svg {
+      width: 122px;
+      height: 122px;
+    }
+
+    .art-stack {
+      position: relative;
+      display: grid;
+      width: 132px;
+      height: 132px;
+      place-items: center;
+    }
+
+    .art-stack .mini-image {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      padding: 5px;
+      border: 2px solid #fff;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 5px 12px #35255f1c;
+    }
+
+    .art-stack .mini-one { top: 3px; right: 2px; }
+    .art-stack .mini-two { bottom: 4px; left: 0; }
+
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+      margin-top: 21px;
+    }
+
+    .choice {
+      min-height: 56px;
+      border: 2px solid transparent;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 850;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .choice:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 18px #12355214;
+    }
+
+    .choice:focus-visible, .next:focus-visible, .restart:focus-visible {
+      outline: 3px solid #f3b443;
+      outline-offset: 3px;
+    }
+
+    .choice.true {
+      color: #08785f;
+      background: #e8f7f1;
+    }
+
+    .choice.false {
+      color: #c24e42;
+      background: #fff0ed;
+    }
+
+    .choice:disabled { cursor: default; opacity: .7; }
+    .choice.selected-correct { border-color: var(--green); opacity: 1; }
+    .choice.selected-wrong { border-color: var(--coral); opacity: 1; }
+
+    .feedback {
+      display: none;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: .93rem;
+      line-height: 1.55;
+    }
+
+    .feedback.show { display: block; animation: appear .22s ease-out; }
+    .feedback.correct { color: #12664f; background: #e9f8f2; }
+    .feedback.incorrect { color: #82423b; background: #fff1ed; }
+    .feedback strong { display: block; margin-bottom: 3px; }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 17px;
+    }
+
+    .next, .restart {
+      display: none;
+      min-height: 47px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 13px;
+      color: #fff;
+      background: linear-gradient(110deg, #7654c8, #9872e2);
+      cursor: pointer;
+      font-weight: 850;
+      box-shadow: 0 8px 18px #7654c830;
+    }
+
+    .next.show, .restart.show { display: inline-flex; align-items: center; gap: 8px; }
+
+    .footnote {
+      margin: 15px 3px 0;
+      color: #738196;
+      font-size: .76rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .result {
+      display: none;
+      padding: 27px 12px 10px;
+      text-align: center;
+    }
+
+    .result.show { display: block; animation: appear .3s ease-out; }
+    .result-icon { font-size: 3.5rem; }
+    .result h2 { margin: 9px 0; font-size: 2rem; }
+    .result p { margin: 0 auto 17px; color: var(--muted); line-height: 1.6; }
+    .result .restart { margin: 0 auto; }
+
+    #confetti {
+      position: fixed;
+      z-index: 5;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes nurse-enter {
+      0% { opacity: 0; transform: translate(-50%, -38%) rotate(-5deg) scale(.8); }
+      65% { opacity: 1; transform: translate(-50%, -53%) rotate(3deg) scale(1.05); }
+      100% { opacity: 1; transform: translate(-50%, -50%) rotate(0) scale(1); }
+    }
+
+    @keyframes nurse-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes mouth-talk {
+      from { transform: scaleY(1); }
+      to { transform: scaleY(.35); }
+    }
+
+    .nurse-warning.show svg { animation: nurse-bob .5s ease-in-out 2; }
+    .nurse-warning.is-happy {
+      border-color: #a9dfca;
+      color: #155e49;
+    }
+
+    .nurse-warning .happy-brows,
+    .nurse-warning .happy-mouth,
+    .nurse-warning .thumb-up { display: none; }
+
+    .nurse-warning.is-happy .angry-brows,
+    .nurse-warning.is-happy .angry-mouth { display: none; }
+
+    .nurse-warning.is-happy .happy-brows,
+    .nurse-warning.is-happy .happy-mouth,
+    .nurse-warning.is-happy .thumb-up { display: block; }
+
+    .nurse-warning.speaking .angry-mouth,
+    .nurse-warning.speaking .happy-mouth {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: mouth-talk .2s ease-in-out infinite alternate;
+    }
+
+    .nurse-message {
+      padding: 11px 12px;
+      border-radius: 13px;
+      background: #f5f0ff;
+      font-size: 1.08rem;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .nurse-message::before {
+      display: block;
+      margin-bottom: 4px;
+      color: #8065b4;
+      content: "La enfermera dice:";
+      font-size: .72rem;
+      letter-spacing: .02em;
+    }
+
+    .nurse-message small { display: block; margin-top: 6px; color: #735e9e; font-size: .82rem; font-weight: 650; }
+
+    @media (max-width: 620px) {
+      body { padding: 17px 12px; }
+      .hero { grid-template-columns: 1fr 92px; gap: 10px; padding: 23px 20px; }
+      .hero-art { width: 92px; }
+      .card { padding: 19px 16px; }
+      .question-layout { grid-template-columns: 1fr 95px; gap: 11px; min-height: 150px; }
+      .art-frame { min-height: 100px; }
+      .art-stack { width: 88px; height: 88px; }
+      .art-stack > svg:not(.mini-image) { width: 82px; height: 82px; }
+      .art-stack .mini-image { width: 29px; height: 29px; padding: 4px; }
+      .choices { gap: 9px; }
+      .level-options { grid-template-columns: 1fr; }
+      .level-option { min-height: auto; padding: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <div class="nurse-warning" id="nurse-warning" role="alert" aria-live="assertive" hidden>
+    <svg viewBox="0 0 120 140" role="img" aria-label="Enfermera caricaturesca con expresión enojada">
+      <path d="M22 124c2-24 13-38 38-38s36 14 38 38z" fill="#9a7be0"/>
+      <path d="M43 91h34l9 33H34z" fill="#fff"/>
+      <path d="M49 89v15l11 9 11-9V89" fill="#f3b7a5"/>
+      <path d="M31 55c0-25 12-39 29-39s29 14 29 39v19c0 20-13 34-29 34S31 94 31 74z" fill="#f4c4a7"/>
+      <path d="M29 55c-2-29 12-46 33-46 20 0 32 15 30 43-7-5-12-13-13-21-9 10-26 16-49 14z" fill="#593b70"/>
+      <path class="angry-brows" d="m42 58 13 4m23-4-13 4" stroke="#50304c" stroke-width="4" stroke-linecap="round"/>
+      <path class="happy-brows" d="m43 58 12-2m22 2-12-2" fill="none" stroke="#50304c" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="49" cy="68" rx="3" ry="4" fill="#382442"/>
+      <ellipse cx="73" cy="68" rx="3" ry="4" fill="#382442"/>
+      <path class="angry-mouth" d="M48 91q12-13 25 0" fill="none" stroke="#a83c55" stroke-width="4" stroke-linecap="round"/>
+      <path class="happy-mouth" d="M48 84q12 17 25 0" fill="none" stroke="#a83c55" stroke-width="4" stroke-linecap="round"/>
+      <path class="thumb-up" d="M88 116h8v-10c0-2 2-4 4-7l4-7c2-3 6-1 5 2l-2 8h7c3 0 4 2 3 5l-3 11c0 2-2 3-4 3H96z" fill="#f4c4a7" stroke="#7654c8" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M42 20h36v14H42z" rx="4" fill="#fff"/>
+      <path d="M60 22v10m-5-5h10" stroke="#ef6c59" stroke-width="3" stroke-linecap="round"/>
+      <path d="M60 112v12" stroke="#7654c8" stroke-width="3"/>
+    </svg>
+    <div class="nurse-message">¡Ups! Esa no era.<small>Lee la explicación y sigue intentando.</small></div>
+  </div>
+  <main class="app">
+    <header class="topline">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3v18M5 8h14M5 16h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
+          </svg>
+        </span>
+        AULA CLÍNICA
+      </div>
+      <div class="top-actions">
+        <button class="music-toggle" id="music-toggle" type="button" aria-pressed="false">♫ Música: apagada</button>
+        <span class="level" id="level-label">Elige tu nivel</span>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="title">
+      <div>
+        <p class="eyebrow">Reto de aprendizaje · 35 preguntas</p>
+        <h1 id="title">Venoclisis:<br>¿verdadero o falso?</h1>
+        <p>Lee cada afirmación con atención. No te quedes solo con la respuesta: descubre por qué es correcta.</p>
+      </div>
+      <svg class="hero-art" viewBox="0 0 180 180" role="img" aria-label="Ilustración de una bolsa de solución conectada a un equipo intravenoso">
+        <path d="M60 18h60l-6 69c-1 11-10 20-22 20h-5c-12 0-21-9-22-20z" fill="#d9fbf5" stroke="#fff" stroke-width="4"/>
+        <path d="M70 54h40l-3 31c-1 8-7 13-15 13h-4c-8 0-14-5-15-13z" fill="#58c9b0"/>
+        <path d="M89 107v17c0 12 9 17 9 28s-9 12-9 20" fill="none" stroke="#d6f5f2" stroke-width="5" stroke-linecap="round"/>
+        <path d="M101 132h22v22h-22z" rx="4" fill="#ffb875" stroke="#fff" stroke-width="3"/>
+        <path d="M112 154v10c0 5 5 6 5 10" fill="none" stroke="#d6f5f2" stroke-width="4" stroke-linecap="round"/>
+        <path d="M124 38c10-7 21-1 21 9 0 8-10 13-21 25-11-12-21-17-21-25 0-10 11-16 21-9z" fill="#f78473"/>
+        <circle cx="46" cy="120" r="10" fill="#f6c95d"/>
+        <path d="M40 120h12M46 114v12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </section>
+
+    <section class="card" aria-live="polite">
+      <div class="level-select" id="level-select">
+        <h2>Elige tu nivel</h2>
+        <p>Escoge el reto que quieras jugar. Las preguntas cambian de orden cada vez.</p>
+        <div class="level-options" role="group" aria-label="Selecciona un nivel de dificultad">
+          <button class="level-option" type="button" data-level="facil">
+            <span class="level-icon" aria-hidden="true">🌱</span>
+            <strong>Fácil</strong>
+            <small>Conceptos básicos · 12 preguntas</small>
+          </button>
+          <button class="level-option" type="button" data-level="medio">
+            <span class="level-icon" aria-hidden="true">🧠</span>
+            <strong>Medio</strong>
+            <small>Decisiones de cuidado · 12 preguntas</small>
+          </button>
+          <button class="level-option" type="button" data-level="super">
+            <span class="level-icon" aria-hidden="true">🔥</span>
+            <strong>Súper difícil</strong>
+            <small>Casos y detalles · 11 preguntas</small>
+          </button>
+        </div>
+      </div>
+      <div id="game" hidden>
+        <div class="stats">
+          <span id="counter">Pregunta 1 de 35</span>
+          <span class="score-pill" id="score">Aciertos: 0</span>
+        </div>
+        <div class="track" role="progressbar" aria-label="Progreso del juego" aria-valuemin="0" aria-valuemax="35" aria-valuenow="0">
+          <div class="progress" id="progress"></div>
+        </div>
+        <div class="question-layout">
+          <div>
+            <div class="question-controls">
+              <p class="question-index" id="category">Conceptos esenciales</p>
+              <button class="repeat-question" id="repeat-question" type="button" aria-label="Volver a leer la pregunta">🔊 Repetir</button>
+            </div>
+            <h2 class="question" id="question"></h2>
+          </div>
+          <div class="art-frame" id="question-art" aria-hidden="true"></div>
+        </div>
+        <div class="choices" role="group" aria-label="Elige verdadero o falso">
+          <button class="choice true" type="button" data-answer="true">✓ &nbsp; Verdadero</button>
+          <button class="choice false" type="button" data-answer="false">✕ &nbsp; Falso</button>
+        </div>
+        <div class="feedback" id="feedback" role="status"></div>
+        <div class="actions">
+          <button class="next" id="next" type="button">Siguiente <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="footnote">Material educativo. La práctica clínica debe realizarse con supervisión y conforme a los protocolos vigentes de cada institución.</p>
+      </div>
+      <div class="result" id="result" aria-live="polite">
+        <div class="result-icon" id="result-icon">🎉</div>
+        <h2 id="result-title">¡Reto completado!</h2>
+        <p id="result-text"></p>
+        <div class="result-actions">
+          <button class="restart" id="restart" type="button">Jugar otra vez ↻</button>
+          <button class="restart secondary" id="change-level" type="button">Cambiar nivel</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      { category: "Elegir una vena", text: "Para una vía que se usará pocos días, suele convenir empezar por una vena de la mano o el antebrazo y guardar otras opciones.", answer: true, explanation: "Correcto. Empezar por una vena más baja puede dejar otras opciones disponibles. La decisión también depende del tratamiento y del estado de las venas.", art: "vein" },
+      { category: "Limpieza", text: "Después de limpiar la piel, se puede volver a tocar el sitio con un dedo limpio si no se toca justo donde entrará el catéter.", answer: false, explanation: "No. Tocar la zona limpia puede llevar gérmenes al sitio. Si se toca por accidente, hay que volver a limpiarla según las indicaciones del centro.", art: "asepsis" },
+      { category: "Lugar de la vía", text: "Si hay otra vena adecuada, evitar el pliegue del codo puede ayudar a que doblar el brazo no tire tanto del catéter.", answer: true, explanation: "Correcto. El movimiento de una articulación puede tirar del catéter o molestar. La elección final depende de la vena y del tratamiento.", art: "joint" },
+      { category: "Revisar la zona", text: "Si la persona no siente dolor, eso basta para confirmar que el líquido está entrando bien en la vena.", answer: false, explanation: "No. También hay que mirar la zona. Puede aparecer hinchazón o un cambio en la piel aunque la persona no sienta dolor.", art: "assessment" },
+      { category: "Elegir el catéter", text: "El catéter más delgado siempre es la mejor opción, incluso si el líquido debe pasar rápido.", answer: false, explanation: "No siempre. El tamaño debe servir para el tratamiento y la rapidez necesaria, y ser adecuado para la vena.", art: "catheter" },
+      { category: "Seguridad", text: "Aunque no haya molestias, conviene revisar cada día si la vía todavía se necesita.", answer: true, explanation: "Correcto. Revisar si aún hace falta ayuda a evitar mantener una vía sin motivo. Si ya no se necesita, se retira según las indicaciones del centro.", art: "check" },
+      { category: "Revisar la zona", text: "Si la vía no duele y parece funcionar, ya no hace falta volver a mirar la piel alrededor.", answer: false, explanation: "No. Hay que revisar la zona durante el uso, aunque no duela. El enrojecimiento, el calor o la hinchazón se deben valorar.", art: "warning" },
+      { category: "Conexiones", text: "Limpiar la conexión según las indicaciones y dejarla secar ayuda a evitar que entren gérmenes.", answer: true, explanation: "Correcto. Hay que seguir las indicaciones del centro y del producto, incluido el tiempo de secado.", art: "asepsis" },
+      { category: "Paso del líquido", text: "Si cuesta pasar líquido por la vía, se puede empujar con más fuerza para destaparla.", answer: false, explanation: "No. No hay que forzar el líquido. Se debe parar y pedir orientación según las indicaciones del centro.", art: "pressure" },
+      { category: "Medicamentos", text: "El tipo de medicamento puede cambiar qué clase de vía es la más segura para administrarlo.", answer: true, explanation: "Correcto. Algunos medicamentos pueden dañar la vena o el tejido si se salen de ella. La vía se elige según el medicamento y las indicaciones clínicas.", art: "fluid" },
+      { category: "Registro", text: "Anotar dónde está la vía y cómo se ve la zona ayuda al siguiente profesional a notar cambios.", answer: true, explanation: "Correcto. Un registro claro ayuda al equipo a comparar revisiones y dar continuidad al cuidado.", art: "chart" },
+      { category: "Medicamentos", text: "Si se mezcla un medicamento con más líquido, siempre se puede pasar por cualquier vena de la mano.", answer: false, explanation: "No. Mezclarlo con más líquido no hace que cualquier vena o vía sea adecuada. Hay que seguir las indicaciones para ese medicamento.", art: "fluid" },
+      { category: "Bomba de infusión", text: "Si se usa una bomba, ya no es necesario revisar a la persona ni la zona de la vía.", answer: false, explanation: "No. La bomba ayuda a controlar el paso del líquido, pero no reemplaza la revisión de la persona ni de la vía.", art: "assessment" },
+      { category: "Limpieza", text: "Después de limpiar la piel, esperar a que se seque antes de continuar ayuda a que la limpieza funcione bien.", answer: true, explanation: "Correcto. Se debe respetar el tiempo de secado indicado para el producto y el protocolo del centro.", art: "asepsis" },
+      { category: "Seguridad", text: "Una vía que ya no se necesita puede dejarse puesta hasta el alta, aunque pasen varios días.", answer: false, explanation: "No. Hay que revisar si todavía se necesita. Si ya no hace falta, se retira siguiendo las indicaciones del centro.", art: "check" },
+      { category: "Higiene de manos", text: "Usar guantes elimina la necesidad de lavarse o limpiarse las manos antes de atender una vía.", answer: false, explanation: "No. Los guantes no reemplazan la higiene de manos. Se siguen las medidas de higiene indicadas antes y después de atender la vía.", art: "asepsis" },
+      { category: "Posición", text: "Apoyar el brazo en una posición cómoda puede ayudar a que la persona lo mantenga quieto durante la atención.", answer: true, explanation: "Correcto. Una posición cómoda ayuda a la persona y al profesional. No debe causar dolor ni impedir la circulación.", art: "joint" },
+      { category: "Revisar la zona", text: "Enrojecimiento, calor o dolor cerca de la vía son cambios que se deben revisar, aunque el líquido siga pasando.", answer: true, explanation: "Correcto. Que el líquido siga pasando no descarta un problema. Hay que valorar esos cambios y seguir las indicaciones del centro.", art: "warning" },
+      { category: "Conexiones", text: "Si una conexión parece limpia a simple vista, no hace falta limpiarla antes de usarla.", answer: false, explanation: "No. Que parezca limpia no significa que lo esté. Se limpia según las indicaciones cada vez que corresponda.", art: "asepsis" },
+      { category: "Revisar la zona", text: "La hinchazón puede ser una señal de que parte del líquido está entrando en el tejido alrededor de la vena.", answer: true, explanation: "Correcto. La hinchazón puede indicar que el líquido no está entrando donde se espera. Hay que parar y pedir valoración según el protocolo.", art: "assessment" },
+      { category: "Elegir una vena", text: "Si una vena se ve con facilidad, siempre es la mejor para cualquier tratamiento.", answer: false, explanation: "No. También importan el estado de la vena, el lugar, el tratamiento y la comodidad de la persona.", art: "vein" },
+      { category: "Orden médica", text: "La rapidez del líquido debe seguir la orden y las indicaciones del equipo, no ajustarse solo para terminar antes.", answer: true, explanation: "Correcto. Cambiar la rapidez sin indicación puede ser peligroso. Se sigue la orden y se consulta si hay dudas.", art: "chart" },
+      { category: "Conexiones", text: "Dos líquidos que se ven iguales siempre se pueden mezclar o pasar por la misma vía sin revisar.", answer: false, explanation: "No. El aspecto no permite saber si dos líquidos o medicamentos se pueden mezclar. Hay que comprobarlo antes según las indicaciones.", art: "fluid" },
+      { category: "Cuidado de la mano", text: "Dejar la mano en una posición cómoda y evitar que el catéter quede doblado puede ayudar a que el líquido pase sin problemas.", answer: true, explanation: "Correcto. La posición y que el tubo no esté doblado pueden influir en el paso del líquido y la comodidad.", art: "catheter" },
+      { category: "Bomba de infusión", text: "Si la bomba avisa que algo bloquea el paso, lo correcto es subir la presión para que el líquido siga.", answer: false, explanation: "No. No se debe aumentar la presión para vencer un bloqueo. Hay que revisar la situación y seguir las indicaciones del equipo y del centro.", art: "pressure" },
+      { category: "Vigilancia", text: "Una persona puede tener un problema en la vía aunque la bomba no muestre una alarma.", answer: true, explanation: "Correcto. La bomba no detecta todos los problemas. Por eso también se revisa a la persona y la zona de la vía.", art: "assessment" },
+      { category: "Material", text: "Una aguja o pieza marcada para un solo uso se puede guardar para otro paciente si se ve limpia.", answer: false, explanation: "No. El material de un solo uso no se reutiliza. Se desecha siguiendo las reglas de seguridad del centro.", art: "alert" },
+      { category: "Seguridad", text: "Si la persona dice que siente ardor o molestia nueva, conviene parar y revisar antes de seguir.", answer: true, explanation: "Correcto. Una molestia nueva merece atención. Se detiene y se valora la situación siguiendo las indicaciones clínicas.", art: "warning" },
+      { category: "Higiene de manos", text: "Después de quitarse los guantes, no hace falta limpiarse las manos si no se ven sucias.", answer: false, explanation: "No. Las manos se limpian según las indicaciones incluso si parecen limpias, también después de quitarse los guantes.", art: "asepsis" },
+      { category: "Elección de la vía", text: "El tratamiento, el tiempo que durará y el estado de las venas son factores que se tienen en cuenta al elegir una vía.", answer: true, explanation: "Correcto. La elección se adapta a la persona y al tratamiento, siguiendo las indicaciones clínicas del centro.", art: "vein" },
+      { category: "Colocación", text: "Una vena donde se siente el pulso es una buena primera opción para colocar una vía común.", answer: false, explanation: "No. Una vía común se coloca en una vena, no en una arteria. Si se duda sobre el sitio, se debe pedir ayuda antes de continuar.", art: "alert" },
+      { category: "Revisar la zona", text: "Conviene revisar la zona al usar la vía y volver a mirarla durante el tratamiento, según las indicaciones del centro.", answer: true, explanation: "Correcto. Revisar en distintos momentos ayuda a notar cambios a tiempo. Se sigue el calendario de revisión del centro.", art: "check" },
+      { category: "Registro", text: "Si la vía se ve bien, no hace falta anotar que se revisó.", answer: false, explanation: "No. La revisión y los hallazgos se anotan según las reglas del centro, aunque no se observen problemas.", art: "chart" },
+      { category: "Medicamentos", text: "Si un medicamento se sale de la vena y puede dañar la piel, hay que detenerlo y avisar enseguida.", answer: true, explanation: "Correcto. Se detiene el paso del medicamento y se siguen de inmediato las indicaciones del centro. Los pasos siguientes dependen del medicamento.", art: "alert" },
+      { category: "Seguridad", text: "Si el enrojecimiento o la hinchazón desaparecen solos, se puede seguir sin revisar ni avisar a nadie.", answer: false, explanation: "No. Un cambio en la zona debe revisarse y comunicarse según las indicaciones, aunque parezca mejorar.", art: "warning" }
+    ];
+
+    const levelQuestionIds = {
+      facil: [1, 3, 6, 7, 10, 13, 16, 17, 18, 27, 28, 33],
+      medio: [0, 2, 4, 5, 8, 9, 11, 14, 19, 20, 25, 30],
+      super: [12, 15, 21, 22, 23, 24, 26, 29, 31, 32, 34]
+    };
+    const levelNames = { facil: "Fácil", medio: "Medio", super: "Súper difícil" };
+    let activeQuestions = [];
+    let activeLevel = "";
+
+    const art = {
+      vein: '<svg viewBox="0 0 120 120"><path d="M18 88c21-3 18-51 42-49s15 43 42 39" fill="none" stroke="#f3a5a0" stroke-width="16" stroke-linecap="round"/><path d="M18 88c21-3 18-51 42-49s15 43 42 39" fill="none" stroke="#cb5465" stroke-width="5" stroke-linecap="round"/><circle cx="60" cy="39" r="7" fill="#fff" stroke="#7654c8" stroke-width="4"/><path d="M60 23v10m-5-5 5 5 5-5" fill="none" stroke="#7654c8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      asepsis: '<svg viewBox="0 0 120 120"><path d="M60 15 96 29v27c0 24-14 40-36 50C38 96 24 80 24 56V29z" fill="#bceee4" stroke="#087f8c" stroke-width="4"/><path d="m43 59 12 12 24-27" fill="none" stroke="#087f8c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="91" cy="88" r="16" fill="#fff" stroke="#7654c8" stroke-width="3"/><path d="M91 80v16m-8-8h16" stroke="#7654c8" stroke-width="3" stroke-linecap="round"/></svg>',
+      joint: '<svg viewBox="0 0 120 120"><path d="M35 17c-5 18 2 28 11 38l-8 13c-7 11-7 23-3 35m50-86c5 18-2 28-11 38l8 13c7 11 7 23 3 35" fill="none" stroke="#f1b293" stroke-width="15" stroke-linecap="round"/><path d="M46 55c8 7 20 7 28 0m-29 17c9-7 21-7 30 0" fill="none" stroke="#7654c8" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="63" r="7" fill="#58c9b0"/></svg>',
+      assessment: '<svg viewBox="0 0 120 120"><rect x="28" y="24" width="64" height="76" rx="12" fill="#fff" stroke="#087f8c" stroke-width="4"/><path d="M43 44h34M43 57h22M43 77h10" stroke="#9bb0c4" stroke-width="4" stroke-linecap="round"/><circle cx="73" cy="77" r="14" fill="#ffb875"/><path d="M73 69v10m0 5v.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>',
+      catheter: '<svg viewBox="0 0 120 120"><path d="M18 69h48c13 0 14-31 31-31h9" fill="none" stroke="#49b8aa" stroke-width="8" stroke-linecap="round"/><path d="M18 69h48c13 0 14-31 31-31h9" fill="none" stroke="#087f8c" stroke-width="2" stroke-dasharray="4 7"/><rect x="14" y="57" width="17" height="24" rx="6" fill="#7654c8"/><path d="M102 31v15m-5-5h10" stroke="#ef6c59" stroke-width="4" stroke-linecap="round"/><circle cx="52" cy="69" r="6" fill="#ffb875"/></svg>',
+      check: '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="40" fill="#e1f6ed" stroke="#138a68" stroke-width="4"/><path d="m39 60 14 14 29-31" fill="none" stroke="#138a68" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 24h18M83 96h18" stroke="#7654c8" stroke-width="4" stroke-linecap="round"/></svg>',
+      warning: '<svg viewBox="0 0 120 120"><path d="M60 17 108 99H12z" fill="#ffe4c4" stroke="#ef8c45" stroke-width="4" stroke-linejoin="round"/><path d="M60 45v25m0 12v1" stroke="#b65b32" stroke-width="7" stroke-linecap="round"/><path d="M34 88c14-8 36-8 52 0" fill="none" stroke="#e67263" stroke-width="5" stroke-linecap="round"/></svg>',
+      pressure: '<svg viewBox="0 0 120 120"><path d="M23 90h74M32 81V42a28 28 0 0 1 56 0v39" fill="none" stroke="#087f8c" stroke-width="6" stroke-linecap="round"/><path d="M60 42 76 31" stroke="#ef6c59" stroke-width="5" stroke-linecap="round"/><circle cx="60" cy="42" r="5" fill="#7654c8"/><path d="M29 30 20 23m71 7 9-7" stroke="#7654c8" stroke-width="4" stroke-linecap="round"/><path d="M49 73h22" stroke="#ffb875" stroke-width="6" stroke-linecap="round"/></svg>',
+      fluid: '<svg viewBox="0 0 120 120"><path d="M43 19h34l-4 42c0 7 13 13 13 28a26 26 0 0 1-52 0c0-15 13-21 13-28z" fill="#fff" stroke="#7654c8" stroke-width="4"/><path d="M42 70h36c3 7 8 11 8 19a26 26 0 0 1-52 0c0-8 5-12 8-19z" fill="#70d2c2"/><path d="M51 40h18" stroke="#ffb875" stroke-width="4" stroke-linecap="round"/><circle cx="60" cy="86" r="5" fill="#fff"/></svg>',
+      chart: '<svg viewBox="0 0 120 120"><rect x="27" y="18" width="66" height="84" rx="9" fill="#fff" stroke="#087f8c" stroke-width="4"/><path d="M43 39h34M43 52h34M43 65h15" stroke="#a8b8c8" stroke-width="4" stroke-linecap="round"/><path d="m46 82 8 8 19-20" fill="none" stroke="#138a68" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      alert: '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="39" fill="#fff0ed" stroke="#ef6c59" stroke-width="4"/><path d="M60 38v28" stroke="#c24e42" stroke-width="8" stroke-linecap="round"/><circle cx="60" cy="79" r="5" fill="#c24e42"/><path d="M17 60h10m66 0h10M60 12v10m0 76v10" stroke="#ffb875" stroke-width="4" stroke-linecap="round"/></svg>'
+    };
+
+    let order = [];
+    let position = 0;
+    let correctCount = 0;
+    let answered = false;
+    let confettiFrame = 0;
+    let nurseTimer = null;
+
+    const counter = document.getElementById("counter");
+    const score = document.getElementById("score");
+    const progress = document.getElementById("progress");
+    const progressTrack = document.querySelector(".track");
+    const category = document.getElementById("category");
+    const questionText = document.getElementById("question");
+    const questionArt = document.getElementById("question-art");
+    const repeatQuestionButton = document.getElementById("repeat-question");
+    const feedback = document.getElementById("feedback");
+    const nextButton = document.getElementById("next");
+    const buttons = Array.from(document.querySelectorAll(".choice"));
+    const canvas = document.getElementById("confetti");
+    const context = canvas.getContext("2d");
+    const levelSelect = document.getElementById("level-select");
+    const game = document.getElementById("game");
+    const result = document.getElementById("result");
+    const levelLabel = document.getElementById("level-label");
+    const nurseWarning = document.getElementById("nurse-warning");
+    const colors = ["#16a895", "#f3b443", "#7654c8", "#ef6c59", "#57a6d8", "#c5a5ff", "#f6bfdc"];
+    const musicButton = document.getElementById("music-toggle");
+    let audioContext = null;
+    let musicTimer = null;
+    let musicStep = 0;
+    let speechGeneration = 0;
+    const pendingSpeech = new Set();
+    const melody = [
+      659.25, 783.99, 987.77, 783.99,
+      698.46, 880, 1046.5, 880,
+      783.99, 987.77, 1174.66, 987.77,
+      880, 1046.5, 1318.51, 1046.5
+    ];
+
+    function playTone(frequency, startTime, duration, volume, type) {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(volume, startTime + 0.035);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
+    }
+
+    function playMusicStep() {
+      const now = audioContext.currentTime;
+      playTone(melody[musicStep % melody.length], now, 0.2, 0.055, "triangle");
+      if (musicStep % 2 === 0) {
+        playTone([329.63, 392, 493.88, 392][Math.floor(musicStep / 2) % 4], now, 0.24, 0.025, "sine");
+      }
+      musicStep++;
+    }
+
+    function toggleMusic() {
+      if (musicTimer !== null) {
+        window.clearInterval(musicTimer);
+        musicTimer = null;
+        musicButton.textContent = "♫ Música: apagada";
+        musicButton.setAttribute("aria-pressed", "false");
+        return;
+      }
+
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) {
+        musicButton.textContent = "Audio no disponible";
+        musicButton.disabled = true;
+        return;
+      }
+      audioContext = audioContext || new AudioContextClass();
+      audioContext.resume();
+      musicStep = 0;
+      playMusicStep();
+      musicTimer = window.setInterval(playMusicStep, 250);
+      musicButton.textContent = "♫ Música: encendida";
+      musicButton.setAttribute("aria-pressed", "true");
+    }
+
+    function shuffledIndices() {
+      const indices = activeQuestions.map((_, index) => index);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      return indices;
+    }
+
+    function startLevel(level) {
+      cancelSpeech();
+      activeLevel = level;
+      activeQuestions = levelQuestionIds[level].map(index => questions[index]);
+      position = 0;
+      correctCount = 0;
+      order = shuffledIndices();
+      levelLabel.textContent = levelNames[level];
+      document.querySelector(".eyebrow").textContent =
+        `Nivel ${levelNames[level]} · ${activeQuestions.length} preguntas`;
+      progressTrack.setAttribute("aria-valuemax", String(activeQuestions.length));
+      levelSelect.hidden = true;
+      result.classList.remove("show");
+      document.getElementById("restart").classList.remove("show");
+      document.getElementById("change-level").classList.remove("show");
+      game.hidden = false;
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      answered = false;
+      const question = activeQuestions[order[position]];
+      counter.textContent = `Pregunta ${position + 1} de ${activeQuestions.length}`;
+      score.textContent = `Aciertos: ${correctCount}`;
+      progress.style.width = `${(position / activeQuestions.length) * 100}%`;
+      progressTrack.setAttribute("aria-valuenow", String(position));
+      category.textContent = question.category;
+      questionText.textContent = question.text;
+      questionArt.innerHTML = `<div class="art-stack">${art[question.art]}<svg class="mini-image mini-one" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 14.8 9l6.7.7-5 4.5 1.4 6.6-5.9-3.4-5.9 3.4 1.4-6.6-5-4.5L9.2 9z" fill="#a78bfa"/></svg><svg class="mini-image mini-two" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5s-7 7.2-7 12a7 7 0 0 0 14 0c0-4.8-7-12-7-12" fill="#70d2c2"/><path d="M8.5 15a3.5 3.5 0 0 0 3.5 3.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div>`;
+      feedback.className = "feedback";
+      feedback.textContent = "";
+      nextButton.classList.remove("show");
+      buttons.forEach(button => {
+        button.disabled = false;
+        button.classList.remove("selected-correct", "selected-wrong");
+      });
+      speakQuestion();
+    }
+
+    function selectAnswer(value, selectedButton) {
+      if (answered) return;
+      answered = true;
+      const question = activeQuestions[order[position]];
+      const isCorrect = value === question.answer;
+      if (isCorrect) correctCount++;
+      showNurse(isCorrect);
+      speakNurse(isCorrect);
+
+      buttons.forEach(button => {
+        button.disabled = true;
+        if (button.dataset.answer === String(question.answer)) {
+          button.classList.add("selected-correct");
+        }
+      });
+      if (!isCorrect) selectedButton.classList.add("selected-wrong");
+
+      feedback.className = `feedback show ${isCorrect ? "correct" : "incorrect"}`;
+      feedback.innerHTML = `<strong>${isCorrect ? "¡Correcto!" : "No exactamente."}</strong>${question.explanation}`;
+      score.textContent = `Aciertos: ${correctCount}`;
+      nextButton.innerHTML = position === activeQuestions.length - 1
+        ? 'Ver resultado <span aria-hidden="true">→</span>'
+        : 'Siguiente <span aria-hidden="true">→</span>';
+      nextButton.classList.add("show");
+      nextButton.focus();
+    }
+
+    function showNurse(isCorrect) {
+      window.clearTimeout(nurseTimer);
+      nurseWarning.classList.toggle("is-happy", isCorrect);
+      nurseWarning.querySelector("svg").setAttribute("aria-label", isCorrect
+        ? "Enfermera feliz haciendo pulgar arriba"
+        : "Enfermera caricaturesca con expresión enojada");
+      nurseWarning.querySelector(".nurse-message").innerHTML = isCorrect
+        ? "¡Muy bien! 👍<small>Respuesta correcta, sigue así.</small>"
+        : "¡Ups! Esa no era.<small>Lee la explicación y sigue intentando.</small>";
+      nurseWarning.hidden = false;
+      nurseWarning.classList.remove("show");
+      nurseWarning.classList.add("speaking");
+      void nurseWarning.offsetWidth;
+      nurseWarning.classList.add("show");
+      nurseTimer = window.setTimeout(() => {
+        nurseWarning.hidden = true;
+        nurseWarning.classList.remove("show");
+        nurseWarning.classList.remove("speaking");
+      }, 2800);
+    }
+
+    function cancelSpeech() {
+      speechGeneration++;
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      pendingSpeech.forEach(entry => {
+        window.clearTimeout(entry.timer);
+        window.speechSynthesis.removeEventListener("voiceschanged", entry.speak);
+      });
+      pendingSpeech.clear();
+    }
+
+    function speakText(text, pitch, onEnd) {
+      if (!("speechSynthesis" in window) || typeof window.SpeechSynthesisUtterance !== "function") return;
+      const synth = window.speechSynthesis;
+      const generation = speechGeneration;
+      const utterance = new window.SpeechSynthesisUtterance(text);
+      utterance.lang = "es-MX";
+      utterance.rate = 1.05;
+      utterance.pitch = pitch;
+      if (onEnd) {
+        utterance.onend = onEnd;
+        utterance.onerror = onEnd;
+      }
+
+      let spoken = false;
+      let entry = null;
+      const speak = () => {
+        if (spoken || generation !== speechGeneration) return;
+        spoken = true;
+        if (entry) {
+          window.clearTimeout(entry.timer);
+          synth.removeEventListener("voiceschanged", speak);
+          pendingSpeech.delete(entry);
+        }
+        const spanishVoice = synth.getVoices().find(voice => voice.lang.toLowerCase().startsWith("es"));
+        if (spanishVoice) utterance.voice = spanishVoice;
+        synth.speak(utterance);
+      };
+
+      if (synth.getVoices().length) {
+        speak();
+      } else {
+        entry = { speak: speak, timer: null };
+        pendingSpeech.add(entry);
+        synth.addEventListener("voiceschanged", speak);
+        entry.timer = window.setTimeout(speak, 700);
+      }
+    }
+
+    function speakQuestion() {
+      const question = activeQuestions[order[position]];
+      speakText(`Pregunta ${position + 1}. ${question.text}`, 1);
+    }
+
+    function speakNurse(isCorrect) {
+      const message = isCorrect
+        ? "¡Muy bien! Respuesta correcta, sigue así."
+        : "¡Ups! Esa no era. Lee la explicación y sigue intentando.";
+      speakText(message, isCorrect ? 1.2 : 0.85, () => nurseWarning.classList.remove("speaking"));
+    }
+
+    function finishGame() {
+      game.hidden = true;
+      result.classList.add("show");
+      const percent = Math.round((correctCount / activeQuestions.length) * 100);
+      const icon = document.getElementById("result-icon");
+      const title = document.getElementById("result-title");
+      const text = document.getElementById("result-text");
+      if (correctCount === activeQuestions.length) {
+        icon.textContent = "🏆";
+        title.textContent = "¡Dominio perfecto!";
+        text.textContent = `¡${correctCount} de ${activeQuestions.length}! Respondiste todo correctamente. Tu atención al detalle merece una celebración.`;
+      } else if (percent >= 85) {
+        icon.textContent = "🌟";
+        title.textContent = "¡Excelente trabajo!";
+        text.textContent = `Obtuviste ${correctCount} de ${activeQuestions.length} (${percent}%). Repasa las explicaciones de las preguntas que te hicieron dudar.`;
+      } else if (percent >= 60) {
+        icon.textContent = "💪";
+        title.textContent = "¡Buen avance!";
+        text.textContent = `Obtuviste ${correctCount} de ${activeQuestions.length} (${percent}%). Vuelve a jugar para reforzar los conceptos.`;
+      } else {
+        icon.textContent = "📚";
+        title.textContent = "¡A seguir aprendiendo!";
+        text.textContent = `Obtuviste ${correctCount} de ${activeQuestions.length} (${percent}%). Revisa las explicaciones y prueba otra vez.`;
+      }
+      launchConfetti();
+      document.getElementById("restart").classList.add("show");
+      document.getElementById("change-level").classList.add("show");
+    }
+
+    function resizeCanvas() {
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * scale;
+      canvas.height = window.innerHeight * scale;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      context.setTransform(scale, 0, 0, scale, 0, 0);
+    }
+
+    function launchConfetti() {
+      playApplause();
+      resizeCanvas();
+      const pieces = Array.from({ length: 170 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: -Math.random() * window.innerHeight,
+        size: 5 + Math.random() * 7,
+        speed: 2 + Math.random() * 4,
+        drift: (Math.random() - .5) * 2.5,
+        angle: Math.random() * Math.PI,
+        spin: (Math.random() - .5) * .18,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      }));
+      const started = performance.now();
+
+      function draw(now) {
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        pieces.forEach(piece => {
+          piece.y += piece.speed;
+          piece.x += piece.drift;
+          piece.angle += piece.spin;
+          context.save();
+          context.translate(piece.x, piece.y);
+          context.rotate(piece.angle);
+          context.fillStyle = piece.color;
+          context.fillRect(-piece.size * .32, -piece.size * 1.4, piece.size * .64, piece.size * 2.8);
+          context.restore();
+        });
+        if (now - started < 4200) {
+          confettiFrame = requestAnimationFrame(draw);
+        } else {
+          context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+      }
+      confettiFrame = requestAnimationFrame(draw);
+    }
+
+    function playApplause() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      audioContext = audioContext || new AudioContextClass();
+      audioContext.resume();
+
+      const buffer = audioContext.createBuffer(1, Math.floor(audioContext.sampleRate * 0.045), audioContext.sampleRate);
+      const samples = buffer.getChannelData(0);
+      for (let i = 0; i < samples.length; i++) {
+        samples[i] = (Math.random() * 2 - 1) * (1 - i / samples.length);
+      }
+
+      for (let i = 0; i < 44; i++) {
+        const start = audioContext.currentTime + i * 0.05 + Math.random() * 0.025;
+        const source = audioContext.createBufferSource();
+        const filter = audioContext.createBiquadFilter();
+        const gain = audioContext.createGain();
+        filter.type = "highpass";
+        filter.frequency.setValueAtTime(1100 + Math.random() * 900, start);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.06 + Math.random() * 0.035, start + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.045);
+        source.buffer = buffer;
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioContext.destination);
+        source.start(start);
+      }
+    }
+
+    function restartGame() {
+      cancelSpeech();
+      cancelAnimationFrame(confettiFrame);
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      order = shuffledIndices();
+      position = 0;
+      correctCount = 0;
+      game.hidden = false;
+      result.classList.remove("show");
+      document.getElementById("restart").classList.remove("show");
+      renderQuestion();
+    }
+
+    function changeLevel() {
+      cancelSpeech();
+      window.clearTimeout(nurseTimer);
+      nurseWarning.hidden = true;
+      game.hidden = true;
+      result.classList.remove("show");
+      document.getElementById("restart").classList.remove("show");
+      document.getElementById("change-level").classList.remove("show");
+      levelLabel.textContent = "Elige tu nivel";
+      document.querySelector(".eyebrow").textContent = "Reto de aprendizaje · 35 preguntas";
+      levelSelect.hidden = false;
+    }
+
+    document.querySelectorAll(".level-option").forEach(button => {
+      button.addEventListener("click", () => startLevel(button.dataset.level));
+    });
+    buttons.forEach(button => {
+      button.addEventListener("click", () => selectAnswer(button.dataset.answer === "true", button));
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (!answered) return;
+      if (position === activeQuestions.length - 1) {
+        progress.style.width = "100%";
+        progressTrack.setAttribute("aria-valuenow", String(activeQuestions.length));
+        finishGame();
+        return;
+      }
+      position++;
+      renderQuestion();
+    });
+
+    document.getElementById("restart").addEventListener("click", restartGame);
+    document.getElementById("change-level").addEventListener("click", changeLevel);
+    repeatQuestionButton.addEventListener("click", () => {
+      cancelSpeech();
+      speakQuestion();
+    });
+    musicButton.addEventListener("click", toggleMusic);
+    window.addEventListener("resize", resizeCanvas);
+  </script>
+</body>
+</html>
